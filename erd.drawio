@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Safari/605.1.15" version="29.2.9">
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.2.9 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.2.9">
   <diagram id="R2lEEEUBdFMjLlhIrx00" name="Page-1">
-    <mxGraphModel dx="788" dy="543" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#ffffff" math="0" shadow="0" extFonts="Permanent Marker^https://fonts.googleapis.com/css?family=Permanent+Marker">
+    <mxGraphModel dx="946" dy="732" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#ffffff" math="0" shadow="0" extFonts="Permanent Marker^https://fonts.googleapis.com/css?family=Permanent+Marker">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -142,27 +142,6 @@
             <mxRectangle height="30" width="150" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="GeLWTcyBma_nGSlUmARe-320" edge="1" parent="1" source="GeLWTcyBma_nGSlUmARe-265" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.508;entryY=1.094;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;" target="GeLWTcyBma_nGSlUmARe-221">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="420" y="670" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="GeLWTcyBma_nGSlUmARe-265" parent="1" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;" value="NOTIFICARE" vertex="1">
-          <mxGeometry height="60" width="180" x="324" y="990" as="geometry" />
-        </mxCell>
-        <mxCell id="GeLWTcyBma_nGSlUmARe-266" parent="GeLWTcyBma_nGSlUmARe-265" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;" value="" vertex="1">
-          <mxGeometry height="30" width="180" y="30" as="geometry" />
-        </mxCell>
-        <mxCell id="GeLWTcyBma_nGSlUmARe-267" parent="GeLWTcyBma_nGSlUmARe-266" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;overflow=hidden;whiteSpace=wrap;html=1;" value="PK" vertex="1">
-          <mxGeometry height="30" width="30" as="geometry">
-            <mxRectangle height="30" width="30" as="alternateBounds" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="GeLWTcyBma_nGSlUmARe-268" parent="GeLWTcyBma_nGSlUmARe-266" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;fontStyle=5;overflow=hidden;whiteSpace=wrap;html=1;" value="id_notificare" vertex="1">
-          <mxGeometry height="30" width="150" x="30" as="geometry">
-            <mxRectangle height="30" width="150" as="alternateBounds" />
-          </mxGeometry>
-        </mxCell>
         <mxCell id="GeLWTcyBma_nGSlUmARe-275" edge="1" parent="1" source="GeLWTcyBma_nGSlUmARe-238" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;exitX=0.489;exitY=1.067;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="GeLWTcyBma_nGSlUmARe-245" value="">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="140" y="340" as="sourcePoint" />
@@ -281,15 +260,6 @@
         </mxCell>
         <mxCell id="GeLWTcyBma_nGSlUmARe-318" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="1" vertex="1">
           <mxGeometry height="30" width="60" x="580" y="850" as="geometry" />
-        </mxCell>
-        <mxCell id="GeLWTcyBma_nGSlUmARe-321" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="1" vertex="1">
-          <mxGeometry height="30" width="60" x="380" y="600" as="geometry" />
-        </mxCell>
-        <mxCell id="GeLWTcyBma_nGSlUmARe-322" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="primește" vertex="1">
-          <mxGeometry height="30" width="60" x="410" y="810" as="geometry" />
-        </mxCell>
-        <mxCell id="GeLWTcyBma_nGSlUmARe-323" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="M(0)" vertex="1">
-          <mxGeometry height="30" width="60" x="401" y="960" as="geometry" />
         </mxCell>
         <mxCell id="GeLWTcyBma_nGSlUmARe-324" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="M(0)" vertex="1">
           <mxGeometry height="30" width="60" x="250" y="120" as="geometry" />
