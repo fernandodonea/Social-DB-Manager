@@ -136,3 +136,105 @@ end;
 
 
 
+
+
+
+
+-- ex 7
+-- Formulați în limbaj natural o problemă pe care să o rezolvați folosind un subprogram stocat
+-- independent care să utilizeze 2 tipuri diferite de cursoare studiate, unul dintre acestea fiind cursor
+-- parametrizat, dependent de celălalt cursor. Apelați subprogramul.
+
+
+CREATE OR REPLACE PROCEDURE p_afisare_postari_prieteni(
+    p_id_utilizator UTILIZATOR.ID_UTILIZATOR%type
+) IS
+
+    --cursor pentru a cauta prietenii
+    CURSOR c_prieteni IS
+        SELECT U.ID_UTILIZATOR, U.NUME
+        FROM PRIETENIE PRT
+        JOIN UTILIZATOR U ON PRT.ID_PRIETEN=U.ID_UTILIZATOR
+        WHERE PRT.ID_UTILIZATOR = p_id_utilizator AND PRT.STATUS='ACCEPTAT'
+        UNION
+        SELECT U.ID_UTILIZATOR, U.NUME
+        FROM PRIETENIE PRT
+        JOIN UTILIZATOR U ON PRT.ID_UTILIZATOR=U.ID_UTILIZATOR
+        WHERE PRT.ID_PRIETEN=p_id_utilizator AND PRT.STATUS='ACCEPTAT';
+
+    --cursor pentru postarile unui utilizator
+    CURSOR c_postari (c_id_prieten NUMBER) IS
+        SELECT P.CONTINUT_TEXT, P.DATA_POSTARII,G.NUME_GRUP
+        FROM POSTARE P
+        LEFT JOIN GRUP G ON P.ID_GRUP=G.ID_GRUP
+        WHERE P.ID_UTILIZATOR=c_id_prieten
+        ORDER BY DATA_POSTARII DESC;
+
+        v_nume_utilizator UTILIZATOR.NUME%type;
+        v_prieten_id UTILIZATOR.ID_UTILIZATOR%type;
+        v_prieten_nume UTILIZATOR.NUME%type;
+        v_are_postari BOOLEAN;
+BEGIN
+
+    SELECT NUME
+    INTO v_nume_utilizator
+    FROM UTILIZATOR
+    WHERE ID_UTILIZATOR=p_id_utilizator;
+
+
+
+    DBMS_OUTPUT.PUT_LINE(' ');
+    DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+    DBMS_OUTPUT.PUT_LINE('Postarile prietenilor lui ' || v_nume_utilizator);
+    DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+    DBMS_OUTPUT.PUT_LINE(' ');
+
+
+    OPEN c_prieteni;
+    LOOP
+
+
+
+        FETCH c_prieteni INTO v_prieten_id, v_prieten_nume;
+        EXIT WHEN c_prieteni%NOTFOUND; --iesire cand nu mai sunt randuri
+
+        DBMS_OUTPUT.PUT_LINE(v_prieten_nume || ':');
+        DBMS_OUTPUT.PUT_LINE(' ');
+
+        v_are_postari:=FALSE;
+
+        FOR postare IN c_postari(v_prieten_id) LOOP
+
+            v_are_postari:=TRUE;
+
+
+            DBMS_OUTPUT.PUT_LINE(postare.CONTINUT_TEXT);
+            IF postare.NUME_GRUP IS NULL THEN
+                    DBMS_OUTPUT.PUT_LINE('Profil');
+            ELSE
+                    DBMS_OUTPUT.PUT_LINE(postare.NUME_GRUP);
+            end if;
+            DBMS_OUTPUT.PUT_LINE(postare.DATA_POSTARII);
+            DBMS_OUTPUT.PUT_LINE(' ');
+
+
+        end loop;
+
+        IF v_are_postari = FALSE THEN
+            DBMS_OUTPUT.PUT_LINE('Nicio postare');
+        end if;
+
+
+        DBMS_OUTPUT.PUT_LINE('----------');
+
+
+    end loop;
+    CLOSE c_prieteni;
+
+end;
+
+BEGIN
+    p_afisare_postari_prieteni(6);
+end;
+
+
