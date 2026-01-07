@@ -6,6 +6,12 @@
 -- Formulați în limbaj natural o problemă pe care să o rezolvați folosind un subprogram stocat
 -- independent care să utilizeze toate cele 3 tipuri de colecții studiate. Apelați subprogramul.
 
+-- Enunțul problemei:
+-- Se dorește implementarea unei funcționalități de afișare a profilului complet pentru un utilizator specificat prin id.
+-- Procedura trebuie să afișeze lista de prieteni a utilizatorului (folosind tablouri imbricate),
+--  ultimele 3 grupuri în care a intrat utilizatorul (folosind vectori)
+--  si o statistică a activității sale, adică numărul de postări și comentarii (folosind tablouri indexate).
+
 
 
 CREATE OR REPLACE PROCEDURE p_afisare_profil_utilizator(
@@ -132,7 +138,7 @@ end;
 BEGIN
     p_afisare_profil_utilizator(5);
 end;
-
+/
 
 
 
@@ -144,6 +150,14 @@ end;
 -- Formulați în limbaj natural o problemă pe care să o rezolvați folosind un subprogram stocat
 -- independent care să utilizeze 2 tipuri diferite de cursoare studiate, unul dintre acestea fiind cursor
 -- parametrizat, dependent de celălalt cursor. Apelați subprogramul.
+
+
+--Enunt problema
+-- Se doreste afisarea postarilor prietenilor unui utilizator.
+-- Procedura va folosi un cursor clasic pentru a identifica toti prietenii utilizatorlui,
+-- iar apoi un ciclu cursor parametrizat care primeste ca argument id-ul prietenelui curent
+-- pentru a afisa postarile acestuia
+
 
 
 CREATE OR REPLACE PROCEDURE p_afisare_postari_prieteni(
@@ -234,7 +248,338 @@ BEGIN
 end;
 
 BEGIN
-    p_afisare_postari_prieteni(6);
+    p_afisare_postari_prieteni(5);
+end;
+/
+
+
+-- ex 8
+-- Formulați în limbaj natural o problemă pe care să o rezolvați folosind un subprogram stocat
+-- independent de tip funcție care să utilizeze într-o singură comandă SQL 3 dintre tabelele create.
+-- Tratați toate excepțiile care pot apărea, incluzând excepțiile predefinite NO_DATA_FOUND și
+-- TOO_MANY_ROWS. Apelați subprogramul astfel încât să evidențiați toate cazurile tratate.
+
+
+CREATE OR REPLACE FUNCTION f_cauta_continut (
+    p_text_cautat IN VARCHAR2
+) RETURN VARCHAR2
+IS
+    v_rezultat VARCHAR2(256);
+    v_nume_utilizator VARCHAR2(256);
+    v_nume_grup VARCHAR2(256);
+    v_continut_text VARCHAR2(256);
+BEGIN
+
+
+    SELECT U.NUME, NVL(G.NUME_GRUP,'Profil Personal'), P.CONTINUT_TEXT
+    INTO v_nume_utilizator, v_nume_grup, v_continut_text
+    FROM POSTARE P
+    JOIN UTILIZATOR U ON P.ID_UTILIZATOR = U.ID_UTILIZATOR
+    LEFT JOIN GRUP G ON P.ID_GRUP = G.ID_GRUP
+    WHERE UPPER(P.CONTINUT_TEXT) LIKE ('%' || TRIM(UPPER(p_text_cautat)) || '%');
+
+    v_rezultat := 'Postare gasita cu textul "'||p_text_cautat
+                      || '" | Autor: ' || v_nume_utilizator
+                      || ' | Locatie: ' || v_nume_grup
+                      ||'  | Cotinut : "'|| v_continut_text || '"';
+
+    return v_rezultat;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN 'Eroare: Nu s a gasit nicio postare cu textul "' || p_text_cautat || '"';
+    WHEN TOO_MANY_ROWS THEN
+        RETURN 'Eroare: Prea multe postari contin textul "' || p_text_cautat || '"';
+    WHEN OTHERS THEN
+        RETURN 'Eroare necunoscuta';
+end;
+
+BEGIN
+    DBMS_OUTPUT.PUT_LINE(f_cauta_continut('ASC '));
 end;
 
 
+BEGIN
+    DBMS_OUTPUT.PUT_LINE(f_cauta_continut('la'));
+end;
+
+
+BEGIN
+    DBMS_OUTPUT.PUT_LINE(f_cauta_continut('BANANA '));
+end;
+
+
+
+
+
+--ex 9
+-- Formulați în limbaj natural o problemă pe care să o rezolvați folosind un subprogram stocat
+-- independent de tip procedură care să aibă minim 2 parametri și să utilizeze într-o singură
+-- comandă SQL 5 dintre tabelele create. Definiți minim 2 excepții proprii, altele decât cele
+-- predefinite la nivel de sistem. Apelați subprogramul astfel încât să evidențiați toate cazurile definite
+-- și tratate.
+
+-- Enunt problema
+-- Sa se realizeze o procedurea care primeste ca parametru id-ul unui utilizator si un numar maxim de notificari de afisat.
+-- Procedurea va afisa o lista cu utlimele notificatile ale acestuia (cereri de prietenie,
+-- reactii si comentarii la postarile proprii)
+
+CREATE OR REPLACE PROCEDURE p_notificari(
+    p_id_utilizator IN VARCHAR2,
+    p_limita IN NUMBER
+)
+IS
+    v_id_utilizator UTILIZATOR.ID_UTILIZATOR%type;
+    v_nume_utilizator UTILIZATOR.NUME%type;
+    v_nr_notificari NUMBER :=0;
+
+    exceptie_limita_invalida EXCEPTION;
+    exceptie_user_inexistent EXCEPTION;
+    exceptie_zero_notificari EXCEPTION;
+BEGIN
+
+    --verificam limita notificarilor
+    BEGIN
+        --nu putem avea limita negativa notificari sau un numar prea mare
+        IF p_limita <=0 OR p_limita>=256 THEN
+            RAISE exceptie_limita_invalida;
+        end if;
+    END;
+
+
+    --verificam daca exista utilizatorul
+    BEGIN
+        SELECT U.ID_UTILIZATOR,U.NUME
+        INTO v_id_utilizator,v_nume_utilizator
+        FROM UTILIZATOR U
+        WHERE U.ID_UTILIZATOR=p_id_utilizator;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RAISE exceptie_user_inexistent;
+    END;
+
+
+    DBMS_OUTPUT.PUT_LINE(' ');
+    DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+    DBMS_OUTPUT.PUT_LINE('Ultimele'|| p_limita || ' notificari ale utilizatorului ' || v_nume_utilizator);
+    DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+    DBMS_OUTPUT.PUT_LINE(' ');
+
+
+    FOR rezultat IN
+        (
+            SELECT * FROM
+                         (
+                              --cereri de prietenie
+                              SELECT U.NUME || ' ti a trimis o cere de prietenie' AS mesaj,
+                                     P.DATA_TRIMITERII                           AS data_notificare
+                              FROM PRIETENIE P
+                                       JOIN UTILIZATOR U ON P.ID_UTILIZATOR = U.ID_UTILIZATOR
+                              WHERE P.ID_PRIETEN = p_id_utilizator
+                              --AND P.STATUS='ASTEPTARE' AND P.DATA_TRIMITERII >= SYSDATE - p_nr_zile
+
+
+                              UNION
+
+                              --comentarii
+                              SELECT U.NUME || 'a comentat "' || C.CONTINUT_TEXT || '" la postarea ta',
+                                     C.DATA_POSTARII AS data_notificare
+                              FROM COMENTARIU C
+                                       JOIN POSTARE POST ON C.ID_POSTARE = POST.ID_POSTARE
+                                       JOIN UTILIZATOR U ON C.ID_UTILIZATOR = U.ID_UTILIZATOR
+                              WHERE POST.ID_UTILIZATOR = p_id_utilizator
+
+                              UNION
+
+                              --reactii
+                              SELECT U.NUME || ' a reactionat cu ' || R.TIP_REACTIE || ' la postarea ta' AS mesaj,
+                                     R.DATA_TRIMITERII                                                   AS data_notificare
+
+                              FROM REACTIE R
+                                       JOIN POSTARE P ON R.ID_POSTARE = P.ID_POSTARE
+                                       JOIN UTILIZATOR U ON R.ID_UTILIZATOR = U.ID_UTILIZATOR
+                              WHERE P.ID_UTILIZATOR = p_id_utilizator
+
+
+                              ORDER BY 2 DESC
+                        )WHERE ROWNUM<=p_limita
+        ) LOOP
+            DBMS_OUTPUT.PUT_LINE(rezultat.mesaj);
+            DBMS_OUTPUT.PUT_LINE(rezultat.data_notificare);
+            DBMS_OUTPUT.PUT_LINE(' ');
+
+            v_nr_notificari:=v_nr_notificari+1;
+        end loop;
+
+    IF v_nr_notificari = 0 THEN
+        RAISE exceptie_zero_notificari;
+    end if;
+
+EXCEPTION
+    WHEN exceptie_user_inexistent THEN
+        RAISE_APPLICATION_ERROR(-20010, 'Eroare: Utilizatorul nu a fost gasit');
+    WHEN exceptie_zero_notificari THEN
+        RAISE_APPLICATION_ERROR(-20011, 'Eroare:Utilizatorul nu are notificari');
+    WHEN exceptie_limita_invalida THEN
+        RAISE_APPLICATION_ERROR(-20012, 'Eroare: Limita de notificari invalida');
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20013, 'Eroare necunoscuta');
+
+
+end;
+
+
+BEGIN
+    p_notificari(1,2);
+end;
+
+BEGIN
+    p_notificari(1,10);
+end;
+
+--exceptie: utilizatorul nu exista
+BEGIN
+    p_notificari(100,2);
+end;
+
+--exceptie: limita de notificari invalida
+BEGIN
+    p_notificari(1,-1);
+end;
+
+--exceptie: nu exista notificari
+--TODO
+BEGIN
+    p_notificari(6,2);
+end;
+
+/
+
+
+
+
+
+--ex 10
+-- Definiți un trigger de tip LMD la nivel de comandă. Declanșați trigger-ul.
+
+CREATE OR REPLACE PACKAGE p_stare_server IS
+    v_mentenanta BOOLEAN :=FALSE;
+END;
+
+CREATE OR REPLACE TRIGGER trigger_modificare_mentenanta
+BEFORE INSERT OR UPDATE OR DELETE ON POSTARE
+BEGIN
+    IF p_stare_server.v_mentenanta = TRUE THEN
+        RAISE_APPLICATION_ERROR(-20014,'Sistemul este in mentenanta! Nu puteti modifica, adauga sau sterge postari!');
+    end if;
+end;
+
+
+BEGIN
+    --incercam inserarea cat timp serverul nu este in mentenanta
+    DBMS_OUTPUT.PUT_LINE('Serverul este in stara normala');
+    BEGIN
+        INSERT INTO POSTARE (ID_UTILIZATOR, CONTINUT_TEXT)
+        VALUES (1,'Test Postare');
+        DBMS_OUTPUT.PUT_LINE('Succes: Postare Creata');
+    EXCEPTION
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE(SQLERRM);
+    end;
+
+    rollback;
+
+    p_stare_server.v_mentenanta:=True;
+    DBMS_OUTPUT.PUT_LINE('Serverul este in stare de  mentenanta');
+
+
+        BEGIN
+        INSERT INTO POSTARE (ID_UTILIZATOR, CONTINUT_TEXT)
+        VALUES (1,'Test Postare');
+        DBMS_OUTPUT.PUT_LINE('Succes: Postare Creata');
+    EXCEPTION
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE(SQLERRM);
+    end;
+
+    p_stare_server.v_mentenanta:=False;
+end;
+/
+
+
+
+--ex 11
+-- Definiți un trigger de tip LMD la nivel de linie. Declanșați trigger-ul.
+
+
+-- Enuntul problemei
+-- Se doreste implementarea unui sistem de moderare a comentariilor.
+-- Un utilizator nu are voie sa lasa un comentariu cu limbaj neadecvat
+
+CREATE OR REPLACE TRIGGER trigger_limbaj_licentios
+BEFORE INSERT OR UPDATE OF CONTINUT_TEXT ON COMENTARIU
+FOR EACH ROW
+BEGIN
+    IF INSTR(UPPER(:NEW.CONTINUT_TEXT),'CUVANT INTERZIS') > 0 THEN
+        RAISE_APPLICATION_ERROR(-20015, 'Comentariul contine cuvinte interzie!');
+    end if;
+END;
+
+
+
+BEGIN
+        INSERT INTO COMENTARIU (ID_UTILIZATOR, ID_POSTARE, CONTINUT_TEXT)
+        VALUES (1,1,
+        'Comentariu care contine un cuvant decent'
+       );
+
+
+
+    INSERT INTO COMENTARIU (ID_UTILIZATOR, ID_POSTARE, CONTINUT_TEXT)
+    VALUES (1,1,
+        'Comentariu care contine un cuvant interzis'
+       );
+
+    rollback;
+
+end;
+
+
+--ex 12
+--Definiți un trigger de tip LDD. Declanșați trigger-ul.
+
+-- Enunt Problema
+-- Se doreste monitorizarea tuturor modificarile asupra bazei de date.
+--Orice instructie de tip LDD se va monitoriza in tabelul istoric schimbari
+
+CREATE TABLE ISTORIC_SCHIMBARI
+(
+    id_schimbare NUMBER GENERATED BY DEFAULT AS IDENTITY,
+    utilizator varchar2(256),
+    comanda_rulata VARCHAR2(256),
+    tabel_modificat VARCHAR2(256),
+    data DATE
+)
+
+CREATE OR REPLACE TRIGGER trigger_schimbari_baza_date
+AFTER CREATE OR DROP OR ALTER ON SCHEMA
+BEGIN
+    INSERT INTO ISTORIC_SCHIMBARI (utilizator, comanda_rulata, tabel_modificat,data)
+    VALUES (
+            USER,
+            SYS.SYSEVENT,
+            SYS.DICTIONARY_OBJ_NAME,
+            SYSDATE
+           );
+end;
+
+
+BEGIN
+    EXECUTE IMMEDIATE 'CREATE TABLE TABEL_TEST (id_number NUMBER)';
+
+    EXECUTE IMMEDIATE 'ALTER TABLE TABEL_TEST ADD (nume VARCHAR2(256))';
+
+    EXECUTE IMMEDIATE 'DROP TABLE TABEL_TEST';
+
+END;
+SELECT * FROM ISTORIC_SCHIMBARI;
