@@ -131,6 +131,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Reactii lasate: ' || v_statistica('Reactii'));
 
 end;
+/
 
 
 
@@ -246,6 +247,7 @@ BEGIN
     CLOSE c_prieteni;
 
 end;
+/
 
 BEGIN
     p_afisare_postari_prieteni(5);
@@ -293,21 +295,24 @@ EXCEPTION
     WHEN OTHERS THEN
         RETURN 'Eroare necunoscuta';
 end;
+/
 
 BEGIN
     DBMS_OUTPUT.PUT_LINE(f_cauta_continut('ASC '));
 end;
+/
 
 
 BEGIN
     DBMS_OUTPUT.PUT_LINE(f_cauta_continut('la'));
 end;
+/
 
 
 BEGIN
     DBMS_OUTPUT.PUT_LINE(f_cauta_continut('BANANA '));
 end;
-
+/
 
 
 
@@ -361,7 +366,7 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE(' ');
     DBMS_OUTPUT.PUT_LINE('----------------------------------------');
-    DBMS_OUTPUT.PUT_LINE('Ultimele'|| p_limita || ' notificari ale utilizatorului ' || v_nume_utilizator);
+    DBMS_OUTPUT.PUT_LINE('Ultimele '|| p_limita || ' notificari ale utilizatorului ' || v_nume_utilizator);
     DBMS_OUTPUT.PUT_LINE('----------------------------------------');
     DBMS_OUTPUT.PUT_LINE(' ');
 
@@ -427,32 +432,36 @@ EXCEPTION
 
 
 end;
+/
 
 
 BEGIN
     p_notificari(1,2);
 end;
+/
 
 BEGIN
     p_notificari(1,10);
 end;
+/
 
 --exceptie: utilizatorul nu exista
 BEGIN
     p_notificari(100,2);
 end;
+/
 
 --exceptie: limita de notificari invalida
 BEGIN
     p_notificari(1,-1);
 end;
+/
 
 --exceptie: nu exista notificari
 --TODO
 BEGIN
-    p_notificari(6,2);
+    p_notificari(7,2);
 end;
-
 /
 
 
@@ -465,6 +474,7 @@ end;
 CREATE OR REPLACE PACKAGE p_stare_server IS
     v_mentenanta BOOLEAN :=FALSE;
 END;
+/
 
 CREATE OR REPLACE TRIGGER trigger_modificare_mentenanta
 BEFORE INSERT OR UPDATE OR DELETE ON POSTARE
@@ -473,6 +483,7 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20014,'Sistemul este in mentenanta! Nu puteti modifica, adauga sau sterge postari!');
     end if;
 end;
+/
 
 
 BEGIN
@@ -524,6 +535,7 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20015, 'Comentariul contine cuvinte interzie!');
     end if;
 END;
+/
 
 
 
@@ -543,6 +555,7 @@ BEGIN
     rollback;
 
 end;
+/
 
 
 --ex 12
@@ -559,7 +572,8 @@ CREATE TABLE ISTORIC_SCHIMBARI
     comanda_rulata VARCHAR2(256),
     tabel_modificat VARCHAR2(256),
     data DATE
-)
+);
+/
 
 CREATE OR REPLACE TRIGGER trigger_schimbari_baza_date
 AFTER CREATE OR DROP OR ALTER ON SCHEMA
@@ -572,6 +586,7 @@ BEGIN
             SYSDATE
            );
 end;
+/
 
 
 BEGIN
@@ -582,4 +597,6 @@ BEGIN
     EXECUTE IMMEDIATE 'DROP TABLE TABEL_TEST';
 
 END;
+/
 SELECT * FROM ISTORIC_SCHIMBARI;
+/

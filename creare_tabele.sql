@@ -3,16 +3,16 @@
 
 --resetare bd
 
--- DROP TABLE UTILIZATOR_GRUP CASCADE CONSTRAINTS;
--- DROP TABLE UTILIZATOR_CONVERSATIE CASCADE CONSTRAINTS;
--- DROP TABLE PRIETENIE CASCADE CONSTRAINTS;
--- DROP TABLE MESAJ CASCADE CONSTRAINTS;
--- DROP TABLE COMENTARIU CASCADE CONSTRAINTS;
--- DROP TABLE REACTIE CASCADE CONSTRAINTS;
--- DROP TABLE POSTARE CASCADE CONSTRAINTS;
--- DROP TABLE CONVERSATIE CASCADE CONSTRAINTS;
--- DROP TABLE GRUP CASCADE CONSTRAINTS;
--- DROP TABLE UTILIZATOR CASCADE CONSTRAINTS;
+DROP TABLE UTILIZATOR_GRUP CASCADE CONSTRAINTS;
+DROP TABLE UTILIZATOR_CONVERSATIE CASCADE CONSTRAINTS;
+DROP TABLE PRIETENIE CASCADE CONSTRAINTS;
+DROP TABLE MESAJ CASCADE CONSTRAINTS;
+DROP TABLE COMENTARIU CASCADE CONSTRAINTS;
+DROP TABLE REACTIE CASCADE CONSTRAINTS;
+DROP TABLE POSTARE CASCADE CONSTRAINTS;
+DROP TABLE CONVERSATIE CASCADE CONSTRAINTS;
+DROP TABLE GRUP CASCADE CONSTRAINTS;
+DROP TABLE UTILIZATOR CASCADE CONSTRAINTS;
 
 
 --------------- creare tabele ----------
@@ -36,7 +36,8 @@ CREATE TABLE UTILIZATOR
     CONSTRAINT lungime_parola CHECK (LENGTH(parola)>=8),
     CONSTRAINT lungime_telefon CHECK (LENGTH(telefon)=10),
     CONSTRAINT cont_privat CHECK (cont_privat IN (0,1))
-)
+);
+/
 
 
 CREATE TABLE GRUP
@@ -46,7 +47,8 @@ CREATE TABLE GRUP
     descriere VARCHAR2(256) NOT NULL,
     data_crearii DATE DEFAULT  SYSDATE NOT NULL,
     CONSTRAINT cheie_primara_grup PRIMARY KEY (id_grup)
-)
+);
+/
 
 
 CREATE TABLE CONVERSATIE
@@ -56,7 +58,8 @@ CREATE TABLE CONVERSATIE
     data_crearii DATE DEFAULT SYSDATE NOT NULL,
     CONSTRAINT cheie_primara_conversatie PRIMARY KEY (id_conversatie),
     CONSTRAINT verificare_tip_conversatie CHECK ( tip_conversatie  IN ('GRUP','PRIVAT'))
-)
+);
+/
 
 
 CREATE TABLE POSTARE
@@ -72,8 +75,8 @@ CREATE TABLE POSTARE
     CONSTRAINT cheie_straina_postare_utilizator FOREIGN KEY  (id_utilizator) REFERENCES UTILIZATOR(id_utilizator) ON DELETE CASCADE,
     CONSTRAINT cheie_straina_postare_grup FOREIGN KEY (id_grup) REFERENCES GRUP(id_grup) ON DELETE SET NULL,
     CONSTRAINT verificare_tip_media CHECK ( tip_media IN ('IMG','VID'))
-)
-
+);
+/
 
 
 CREATE TABLE COMENTARIU
@@ -86,7 +89,8 @@ CREATE TABLE COMENTARIU
     CONSTRAINT cheie_primara_comentariu PRIMARY KEY (id_comentariu),
     CONSTRAINT cheie_straina_comentariu_utilizator FOREIGN KEY (id_utilizator) REFERENCES UTILIZATOR(id_utilizator) ON DELETE CASCADE,
     CONSTRAINT cheie_straina_comentariu_postare FOREIGN KEY (id_postare) REFERENCES POSTARE(id_postare) ON DELETE CASCADE
-)
+);
+/
 
 
 CREATE TABLE REACTIE
@@ -100,7 +104,8 @@ CREATE TABLE REACTIE
     CONSTRAINT cheie_straina_reactie_utilizator FOREIGN KEY (id_utilizator) REFERENCES UTILIZATOR(id_utilizator) ON DELETE CASCADE,
     CONSTRAINT cheie_straina_reactie_postare FOREIGN KEY (id_postare) REFERENCES POSTARE(id_postare) ON DELETE CASCADE,
     CONSTRAINT verificare_reactie CHECK ( tip_reactie in ('APRECIERE','AMUZANT','INTERESANT'))
-)
+);
+/
 
 CREATE TABLE MESAJ
 (
@@ -112,7 +117,8 @@ CREATE TABLE MESAJ
     CONSTRAINT cheie_primara_mesaj PRIMARY KEY (id_mesaj),
     CONSTRAINT cheie_straina_mesaj_utilizator FOREIGN KEY (id_expeditor) REFERENCES UTILIZATOR(id_utilizator) ON DELETE CASCADE,
     CONSTRAINT cheie_straina_mesaj_conversatie FOREIGN KEY (id_conversatie) REFERENCES  CONVERSATIE(id_conversatie) ON DELETE CASCADE
-)
+);
+/
 
 CREATE TABLE PRIETENIE
 (
@@ -122,11 +128,12 @@ CREATE TABLE PRIETENIE
     status VARCHAR2(16) DEFAULT 'ASTEPTARE' NOT NULL,
     data_trimiterii DATE DEFAULT SYSDATE NOT NULL,
     CONSTRAINT cheie_primara_prietenie PRIMARY KEY (id_prietenie),
-    CONSTRAINT cheie_primara_prietenie_utilizator FOREIGN KEY (id_utilizator) REFERENCES  UTILIZATOR(id_utilizator) ON DELETE  CASCADE,
-    CONSTRAINT cheie_primara_prietenie_prieten FOREIGN KEY (id_prieten) REFERENCES UTILIZATOR(id_utilizator) ON DELETE CASCADE,
+    CONSTRAINT cheie_straina_prietenie_utilizator FOREIGN KEY (id_utilizator) REFERENCES  UTILIZATOR(id_utilizator) ON DELETE  CASCADE,
+    CONSTRAINT cheie_straina_prietenie_prieten FOREIGN KEY (id_prieten) REFERENCES UTILIZATOR(id_utilizator) ON DELETE CASCADE,
     CONSTRAINT verificare_prieteni_diferiti CHECK (id_utilizator != id_prieten),
     CONSTRAINT verificare_status CHECK (status IN ('ASTEPTARE', 'ACCEPTAT','RESPINS'))
-)
+);
+/
 
 
 
@@ -140,7 +147,8 @@ CREATE TABLE UTILIZATOR_GRUP
     CONSTRAINT cheie_straina_utilizator_grup_utilizator FOREIGN KEY (id_utilizator) REFERENCES UTILIZATOR(id_utilizator) ON DELETE CASCADE,
     CONSTRAINT cheie_straina_utilizator_grup_grup FOREIGN KEY (id_grup) REFERENCES GRUP(id_grup) ON DELETE CASCADE,
     CONSTRAINT verificare_rol CHECK ( rol IN ('MEMBRU','ADMIN'))
-)
+);
+/
 
 CREATE TABLE UTILIZATOR_CONVERSATIE
 (
@@ -149,7 +157,9 @@ CREATE TABLE UTILIZATOR_CONVERSATIE
     CONSTRAINT cheie_primara_utilizator_conversatie PRIMARY KEY (id_utilizator,id_conversatie),
     CONSTRAINT cheie_straina_utilizator_conversatie_utilizator FOREIGN KEY (id_utilizator) REFERENCES UTILIZATOR(id_utilizator) ON DELETE CASCADE,
     CONSTRAINT cheie_straina_utilizator_conversatie_conversatie FOREIGN KEY (id_conversatie) REFERENCES  CONVERSATIE(id_conversatie) ON DELETE CASCADE
-)
+);
+/
+
 
 
 commit;

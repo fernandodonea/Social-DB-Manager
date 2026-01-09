@@ -63,6 +63,15 @@ VALUES (
         0,
         TO_DATE('02-05-2024','DD-MM-YYYY')
        );
+INSERT INTO UTILIZATOR (nume, email, parola, telefon, cont_privat, data_inregistrarii)
+VALUES (
+        'Utilizator Sters',
+        'sters@yahoo.com',
+        'Parola123123',
+        '0774567891',
+        0,
+        TO_DATE('04-05-2024','DD-MM-YYYY')
+       );
 
 
 
