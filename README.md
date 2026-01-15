@@ -8,8 +8,10 @@ This project implements the database layer for a Social Media Platform using Ora
     - `create_tables.sql`: DDL scripts to create tables and constraints.
     - `insert.sql`: DML scripts to populate the database with initial data.
     - `tasks.sql`: PL/SQL procedures, functions, and triggers implementing core logic.
+    - `script.sql`: The entire script for the project including creating tables, inserting values and the tasks.
 - **`doc/`**: Documentation files (Requirements, SGBD Documentation).
 - **`diagrams/`**: Database diagrams.
+- **`project.zip`**: The script and the documentation ready to download.
 
 ##  Database Schema
 
