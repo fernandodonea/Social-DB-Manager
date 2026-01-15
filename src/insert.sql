@@ -1,6 +1,18 @@
---Proiect SGBD
+--SGBD Proiect
+
+------------------------------INSERARI TABELE----------------------------
+
+
+
+--ex 5
+-- Adăugați informații coerente în tabelele create
+-- (minim 5 înregistrări pentru fiecare entitateindependentă;
+-- minim 10 înregistrări pentru fiecare tabelă asociativă).
+
+
 
 -- Inserari
+
 
 
 ----------------------- CREAREA UTILIZATORILOR -----------------------
@@ -65,17 +77,17 @@ VALUES (
        );
 INSERT INTO UTILIZATOR (nume, email, parola, telefon, cont_privat, data_inregistrarii)
 VALUES (
-        'Utilizator Sters',
-        'sters@yahoo.com',
+        'Utilizator Inactiv',
+        'inactiv@yahoo.com',
         'Parola123123',
-        '0774567891',
+        '0774567231',
         0,
-        TO_DATE('04-05-2024','DD-MM-YYYY')
+        TO_DATE('04-02-2024','DD-MM-YYYY')
        );
+/
 
 
-
-
+commit;
 
 
 
@@ -96,16 +108,13 @@ VALUES (
 INSERT INTO UTILIZATOR_GRUP (id_utilizator, id_grup, rol, data_aderarii)
 VALUES (1,1,'ADMIN',TO_DATE('05-03-2024','DD-MM-YYYY'));
 
-
 --Nicusor intra in programtorii asc
 INSERT INTO UTILIZATOR_GRUP (id_utilizator, id_grup, rol, data_aderarii)
 VALUES (2,1,'MEMBRU',TO_DATE('10-03-2024','DD-MM-YYYY'));
 
-
 --Fernando intra in programtorii asc mai tarziu
 INSERT INTO UTILIZATOR_GRUP (id_utilizator, id_grup, rol, data_aderarii)
 VALUES (5,1,'MEMBRU',TO_DATE('03-05-2024','DD-MM-YYYY'));
-
 
 --Gigel intra in programatorii asc mai tarziu
 INSERT INTO UTILIZATOR_GRUP (id_utilizator, id_grup, rol, data_aderarii)
@@ -147,7 +156,7 @@ VALUES (
 INSERT INTO UTILIZATOR_GRUP (id_utilizator, id_grup, rol, data_aderarii)
 VALUES (2,3,'ADMIN',TO_DATE('05-04-2024','DD-MM-YYYY'));
 
---Mihaela intra in calatorii si diverse
+--Mihaela intra in calatorii
 INSERT INTO UTILIZATOR_GRUP (id_utilizator, id_grup, rol, data_aderarii)
 VALUES (4,3,'MEMBRU',TO_DATE('04-04-2024','DD-MM-YYYY'));
 
@@ -187,8 +196,7 @@ INSERT INTO UTILIZATOR_GRUP (id_utilizator, id_grup, rol, data_aderarii)
 VALUES (3,5,'ADMIN',TO_DATE('05-05-2024','DD-MM-YYYY'));
 
 
-
-
+commit;
 
 
 
@@ -224,7 +232,7 @@ INSERT INTO PRIETENIE (ID_UTILIZATOR, ID_PRIETEN, STATUS, DATA_TRIMITERII)
 VALUES (2, 4 , 'RESPINS', TO_DATE('15-04-2024','DD-MM-YYYY'));
 
 
-
+commit;
 
 
 ---------------------- CONVERSATII SI MESAJE -------------------------
@@ -259,9 +267,9 @@ INSERT INTO UTILIZATOR_CONVERSATIE (ID_UTILIZATOR, ID_CONVERSATIE) VALUES (1, 2)
 INSERT INTO UTILIZATOR_CONVERSATIE (ID_UTILIZATOR, ID_CONVERSATIE) VALUES (2, 2);--Nicusor
 INSERT INTO UTILIZATOR_CONVERSATIE (ID_UTILIZATOR, ID_CONVERSATIE) VALUES (3, 2);--Ana
 
-
 INSERT INTO MESAJ (id_conversatie, id_expeditor, continut_text, data_trimiterii)
 VALUES (2,3,'Salutari tuturor!',TO_DATE('25-04-2024','DD-MM-YYYY'));
+
 
 
 
@@ -331,7 +339,7 @@ VALUES (6,1,'Salut Fernando! Rezolvarea e simpla: MOV EAX EBX. Succes',TO_DATE('
 
 
 
-
+commit;
 
 
 
@@ -365,7 +373,7 @@ VALUES (2,1,'APRECIERE',TO_DATE('11-03-2024','DD-MM-YYYY'));
 
 --Fernando reactioneaza cu Interesant la postarea lui Andrei
 INSERT INTO REACTIE (id_utilizator, id_postare, tip_reactie, data_trimiterii)
-VALUES (5,1,'APRECIERE',TO_DATE('03-05-2024','DD-MM-YYYY'));
+VALUES (5,1,'INTERESANT',TO_DATE('03-05-2024','DD-MM-YYYY'));
 
 
 ---------------
@@ -380,7 +388,7 @@ VALUES(
         TO_DATE('10-04-2024','DD-MM-YYYY')
       );
 
---Mihaela apreciaza postarea lui Nicusor
+--Mihaela aperciaza postarea lui Nicusor
 INSERT INTO REACTIE (id_utilizator, id_postare, tip_reactie, data_trimiterii)
 VALUES (4,2,'APRECIERE',TO_DATE('11-04-2024','DD-MM-YYYY'));
 
@@ -409,7 +417,7 @@ INSERT INTO REACTIE (id_utilizator, id_postare, tip_reactie, data_trimiterii)
 VALUES (4,3,'APRECIERE',TO_DATE('21-04-2024','DD-MM-YYYY'));
 
 
---Mihaela comenteaza la postarea Anei de pe profil
+--Mihaela comenteaza la postarea Anei de pe profli
 INSERT INTO COMENTARIU (id_utilizator, id_postare, continut_text, data_postarii)
 VALUES (4,3,
         'Bine ai venit Ana!',

@@ -1,5 +1,7 @@
 --SGBD Proiect
 
+------------------------------SCRIPTS----------------------------
+
 
 
 -- ex 6
@@ -7,10 +9,10 @@
 -- independent care să utilizeze toate cele 3 tipuri de colecții studiate. Apelați subprogramul.
 
 -- Enunțul problemei:
--- Se dorește implementarea unei funcționalități de afișare a profilului complet pentru un utilizator specificat prin id.
+--Se dorește implementarea unei funcționalități de afișare a profilului complet pentru un utilizator specificat prin ID.
 -- Procedura trebuie să afișeze lista de prieteni a utilizatorului (folosind tablouri imbricate),
---  ultimele 3 grupuri în care a intrat utilizatorul (folosind vectori)
---  si o statistică a activității sale, adică numărul de postări și comentarii (folosind tablouri indexate).
+-- ultimele 3 grupuri în care a intrat utilizatorul (folosind vectori)
+-- si o statistică a activității sale, adică numărul de postări și comentarii (folosind tablouri indexate).
 
 
 
@@ -261,6 +263,13 @@ end;
 -- Tratați toate excepțiile care pot apărea, incluzând excepțiile predefinite NO_DATA_FOUND și
 -- TOO_MANY_ROWS. Apelați subprogramul astfel încât să evidențiați toate cazurile tratate.
 
+--Enunt problema:
+-- Se dorește căutarea unui text în toate postările existente.
+-- Funcția căuta în conținutul text al postărilor și afișează postarea
+-- (autorul, locația tot conținutul postării) în care se regăsește secvența de tip text căutată.
+-- Dacă nu se găsește nicio postare sau dacă sunt prea multe postări care conțin textul căutat,
+-- se va afișa o eroare.
+
 
 CREATE OR REPLACE FUNCTION f_cauta_continut (
     p_text_cautat IN VARCHAR2
@@ -297,18 +306,15 @@ EXCEPTION
 end;
 /
 
+
 BEGIN
     DBMS_OUTPUT.PUT_LINE(f_cauta_continut('ASC '));
 end;
 /
-
-
 BEGIN
     DBMS_OUTPUT.PUT_LINE(f_cauta_continut('la'));
 end;
 /
-
-
 BEGIN
     DBMS_OUTPUT.PUT_LINE(f_cauta_continut('BANANA '));
 end;
@@ -325,9 +331,9 @@ end;
 -- și tratate.
 
 -- Enunt problema
--- Sa se realizeze o procedurea care primeste ca parametru id-ul unui utilizator si un numar maxim de notificari de afisat.
--- Procedurea va afisa o lista cu utlimele notificatile ale acestuia (cereri de prietenie,
--- reactii si comentarii la postarile proprii)
+--Să dorește realizarea unui sistem de notificări care afișează un număr stabilit de notificări pentru un anumit utilizator.
+-- Procedura primește ca parametru id-ul unui utilizator, un număr maxim de notificări
+-- și afișează cele mai recente notificări ale utilizatorului (cereri de prietenie, reacții și comentarii).
 
 CREATE OR REPLACE PROCEDURE p_notificari(
     p_id_utilizator IN VARCHAR2,
@@ -365,9 +371,9 @@ BEGIN
 
 
     DBMS_OUTPUT.PUT_LINE(' ');
-    DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+    DBMS_OUTPUT.PUT_LINE('------------------------------------------------------------------');
     DBMS_OUTPUT.PUT_LINE('Ultimele '|| p_limita || ' notificari ale utilizatorului ' || v_nume_utilizator);
-    DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+    DBMS_OUTPUT.PUT_LINE('------------------------------------------------------------------');
     DBMS_OUTPUT.PUT_LINE(' ');
 
 
@@ -435,15 +441,18 @@ end;
 /
 
 
+
 BEGIN
     p_notificari(1,2);
 end;
 /
 
+
 BEGIN
-    p_notificari(1,10);
+    p_notificari(1,4);
 end;
 /
+
 
 --exceptie: utilizatorul nu exista
 BEGIN
@@ -451,14 +460,15 @@ BEGIN
 end;
 /
 
+
 --exceptie: limita de notificari invalida
 BEGIN
     p_notificari(1,-1);
 end;
 /
 
+
 --exceptie: nu exista notificari
---TODO
 BEGIN
     p_notificari(7,2);
 end;
@@ -471,6 +481,10 @@ end;
 --ex 10
 -- Definiți un trigger de tip LMD la nivel de comandă. Declanșați trigger-ul.
 
+--Enunt problema
+--Se interzice adăugarea, modificarea sau ștergerea postărilor cât timp serverul este în mentenanță.
+
+--cream un pakcet pentru a simula o variabila globala
 CREATE OR REPLACE PACKAGE p_stare_server IS
     v_mentenanta BOOLEAN :=FALSE;
 END;
@@ -504,7 +518,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Serverul este in stare de  mentenanta');
 
 
-        BEGIN
+    BEGIN
         INSERT INTO POSTARE (ID_UTILIZATOR, CONTINUT_TEXT)
         VALUES (1,'Test Postare');
         DBMS_OUTPUT.PUT_LINE('Succes: Postare Creata');
@@ -522,10 +536,8 @@ end;
 --ex 11
 -- Definiți un trigger de tip LMD la nivel de linie. Declanșați trigger-ul.
 
-
 -- Enuntul problemei
--- Se doreste implementarea unui sistem de moderare a comentariilor.
--- Un utilizator nu are voie sa lasa un comentariu cu limbaj neadecvat
+--Se dorește moderarea comentariilor. Un comentariu nu poate fi lăsat dacă conține cuvinte interzise.
 
 CREATE OR REPLACE TRIGGER trigger_limbaj_licentios
 BEFORE INSERT OR UPDATE OF CONTINUT_TEXT ON COMENTARIU
@@ -544,16 +556,15 @@ BEGIN
         VALUES (1,1,
         'Comentariu care contine un cuvant decent'
        );
-
-
-
+        rollback ;
+End;
+/
+BEGIN
     INSERT INTO COMENTARIU (ID_UTILIZATOR, ID_POSTARE, CONTINUT_TEXT)
     VALUES (1,1,
         'Comentariu care contine un cuvant interzis'
        );
-
     rollback;
-
 end;
 /
 
@@ -562,8 +573,13 @@ end;
 --Definiți un trigger de tip LDD. Declanșați trigger-ul.
 
 -- Enunt Problema
--- Se doreste monitorizarea tuturor modificarile asupra bazei de date.
---Orice instructie de tip LDD se va monitoriza in tabelul istoric schimbari
+-- Se dorește monitorizare tuturor modificărilor asupra bazei de date.
+-- Orice instrucție de tip LDD va fi înregistrată într-un istoric de schimbări.
+
+-- DROP TRIGGER trigger_schimbari_baza_date;
+-- /
+-- DROP TABLE ISTORIC_SCHIMBARI;
+-- /
 
 CREATE TABLE ISTORIC_SCHIMBARI
 (
@@ -587,6 +603,7 @@ BEGIN
            );
 end;
 /
+
 
 
 BEGIN
